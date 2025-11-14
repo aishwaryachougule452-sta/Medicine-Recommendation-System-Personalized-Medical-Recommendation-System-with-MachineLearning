@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Result</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <style> body { background:#efefef; } .container-main { max-width:900px; margin:24px auto; } .card{ padding:18px; } </style>
+</head>
+<body>
+  <div class="container-main">
+    <div class="card">
+      <h3>Predicted Disease: <span style="color:#c0392b;">{{ disease }}</span></h3>
+      <h5>Description</h5>
+      <p>{{ description }}</p>
+      <h5>Precautions</h5>
+      <ul>{% for p in precautions %}<li>{{ p }}</li>{% endfor %}</ul>
+      <h5>Medications</h5>
+      <ul>{% for m in medications %}<li>{{ m }}</li>{% endfor %}</ul>
+      <h5>Workouts</h5>
+      <ul>{% for w in workouts %}<li>{{ w }}</li>{% endfor %}</ul>
+      <h5>Diets</h5>
+      <ul>{% for d in diets %}<li>{{ d }}</li>{% endfor %}</ul>
+      <a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">Back</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Health Care Center</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      background: url("{{ url_for('static', filename='Bg.gif') }}") no-repeat center center fixed;
+      background-size: cover;
+      font-family: "Poppins", sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar-brand img { height:40px; margin-right:8px; }
+    .container-main { max-width: 1000px; margin: 30px auto; text-align: center; }
+    
+    /* Symptom input box */
+    .main-box { 
+      background: rgba(0,0,0,0.85); 
+      padding: 30px; 
+      border-radius:20px; 
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4) inset; 
+      margin-bottom:25px; 
+    }
+    .main-box label { display:block; text-align:left; margin-bottom:10px; font-weight:600; font-size:16px; }
+    .main-box .form-control { 
+      border-radius:8px; 
+      padding:14px; 
+      font-size:16px; 
+      border:none; 
+      outline:none; 
+    }
+    .btn-predict { 
+      background:#c0392b; 
+      color:#fff; 
+      font-weight:700; 
+      padding:14px; 
+      border-radius:10px; 
+      border:none; 
+      width:60%; 
+      max-width:500px; 
+      box-shadow: inset 0 -4px rgba(0,0,0,0.2); 
+      cursor:pointer; 
+      transition:0.3s; 
+    }
+    .btn-predict:hover { background:#e74c3c; }
+
+    /* Buttons row */
+    .buttons-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: nowrap;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    .result-btn {
+      display:flex; align-items:center; gap:8px; padding:10px 14px; border-radius:8px; 
+      border:4px solid rgba(0,0,0,0.15); min-width:120px; font-weight:700; cursor:pointer; 
+      box-shadow:0 4px 0 rgba(0,0,0,0.14); color:#000; background:#fff; transition:0.2s; 
+      white-space: nowrap;
+    }
+    .result-btn:hover { transform: translateY(-2px); }
+
+    .orange{ background:#f6a623; } 
+    .blue{ background:#2b9df4; } 
+    .magenta{ background:#d87ce7; }
+    .red{ background:#e04d4d; } 
+    .green{ background:#7ed321; } 
+    .yellow{ background:#f0d63a; }
+
+    /* Output Card */
+    .card-output { 
+      display:none; 
+      background:#fff; 
+      color:#000; 
+      padding:22px; 
+      border-radius:12px; 
+      max-width:720px; 
+      margin:25px auto; 
+      text-align:left; 
+      box-shadow:0 6px 20px rgba(0,0,0,0.12); 
+    }
+    .card-output h3 { margin:0 0 10px; font-size:20px; }
+    .btn-logout:hover { background:#e74c3c; color:#fff !important; }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+    Health Center
+  </a>
+  <div class="ml-auto d-flex align-items-center">
+    <a href="{{ url_for('logout') }}" class="btn btn-outline-light btn-logout" style="font-weight:600; padding:6px 14px;">
+      🔒 Logout
+    </a>
+  </div>
+</nav>
+
+<div class="container-main">
+  <h2>Health Care Center</h2>
+
+  <!-- Symptom Input Box -->
+  <div class="main-box mt-4">
+    <label>Type Symptoms (comma separated)</label>
+    <input id="symptoms" class="form-control" placeholder="e.g., skin rash, itching">
+    <div class="mt-3 text-center">
+      <button id="recommendBtn" class="btn-predict">Recommendations</button>
+    </div>
+  </div>
+
+  <!-- Result Buttons -->
+  <h3 class="results-title">Our AI Doc Results</h3>
+  <div class="buttons-row">
+    <button class="result-btn orange" data-key="disease">💊 Disease</button>
+    <button class="result-btn blue" data-key="description">📄 Description</button>
+    <button class="result-btn magenta" data-key="precautions">⚠️ Precautions</button>
+    <button class="result-btn red" data-key="medications">💊 Medications</button>
+    <button class="result-btn green" data-key="workouts">🏋️ Workouts</button>
+    <button class="result-btn yellow" data-key="diets">🥗 Diets</button>
+  </div>
+
+  <!-- Output Card -->
+  <div id="outputCard" class="card-output">
+    <h3 id="outputTitle">Title</h3>
+    <div id="outputText">Results will appear here.</div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const recommendBtn = document.getElementById('recommendBtn');
+  const symptomsInput = document.getElementById('symptoms');
+  const outputCard = document.getElementById('outputCard');
+  const outputTitle = document.getElementById('outputTitle');
+  const outputText = document.getElementById('outputText');
+  const resultButtons = document.querySelectorAll('.result-btn');
+  let lastResult = null;
+
+  // Convert snake_case to readable format
+  function formatText(text){
+    if(!text) return '';
+    return text.replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  recommendBtn.addEventListener('click', async () => {
+    const text = symptomsInput.value.trim();
+    if (!text) { alert('Please enter symptoms.'); return; }
+
+    recommendBtn.disabled = true;
+    recommendBtn.textContent = 'Analyzing...';
+
+    try {
+      const res = await fetch('/predict_api', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ symptoms: text })
+      });
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        alert(data.error || 'Server error.');
+        return;
+      }
+
+      lastResult = data;
+      showOutput('Disease', formatText(lastResult.disease || 'Not available'));
+
+    } catch (e) {
+      alert('Network error or server not running.');
+    } finally {
+      recommendBtn.disabled = false;
+      recommendBtn.textContent = 'Recommendations';
+    }
+  });
+
+  function showOutput(title, content) {
+    outputTitle.textContent = title;
+    if (Array.isArray(content)) {
+      outputText.innerHTML = '<ul>' + content.map(i => `<li>${formatText(i)}</li>`).join('') + '</ul>';
+    } else {
+      outputText.textContent = formatText(content);
+    }
+    outputCard.style.display = 'block';
+    outputCard.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  resultButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!lastResult) { alert('Please click Recommendations first.'); return; }
+      const key = btn.dataset.key;
+      const value = lastResult[key];
+      showOutput(btn.textContent.trim(), value || 'Not available');
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+/* ===== Background Style ===== */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  color: white;
+  height: 100vh;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.navbar-brand img {
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+/* ===== Main Container ===== */
+.container-main {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.container-main h2 {
+  font-size: 2rem;
+  text-shadow: 2px 2px 8px #000;
+}
+
+/* ===== Input Box ===== */
+.main-box {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 20px;
+  display: inline-block;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.main-box input {
+  width: 300px;
+  margin: 10px auto;
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  text-align: center;
+}
+
+.btn-predict {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-predict:hover {
+  background-color: #c0392b;
+}
+
+/* ===== Results Section ===== */
+.results-title {
+  margin-top: 40px;
+  font-weight: bold;
+  text-shadow: 2px 2px 8px #000;
+}
+
+.buttons-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.result-btn {
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.result-btn:hover {
+  transform: scale(1.1);
+}
+
+.btn-icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+/* ===== Button Colors ===== */
+.orange { background-color: #f39c12; }
+.blue { background-color: #3498db; }
+.magenta { background-color: #9b59b6; }
+.red { background-color: #e74c3c; }
+.green { background-color: #2ecc71; }
+.yellow { background-color: #f1c40f; }
+
+/* ===== Output Card ===== */
+.card-output {
+  background: rgba(0, 0, 0, 0.8);
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 20px;
+  width: 80%;
+  text-align: left;
+  color: #f5f5f5;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}

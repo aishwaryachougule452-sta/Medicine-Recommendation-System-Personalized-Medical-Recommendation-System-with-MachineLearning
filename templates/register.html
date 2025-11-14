@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Create Account</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <style>
+    body {
+      background: url("{{ url_for('static', filename='login_bg.gif') }}") no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-family: "Poppins", sans-serif;
+    }
+    .register-box {
+      background: rgba(0,0,0,0.85);
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    .register-box input {
+      margin-bottom: 20px;
+      border-radius: 6px;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      font-size: 16px;
+    }
+    .btn-register {
+      background: #27ae60;
+      color: #fff;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 8px;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-register:hover { background:#2ecc71; }
+    .error { color: #ff6b6b; margin-bottom: 10px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="register-box">
+    <h2>Create Account</h2>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('register') }}">
+      <input type="text" name="username" placeholder="Create Username" required>
+      <input type="password" name="password" placeholder="Create Password" required>
+      <small style="color:#ccc; display:block; margin-bottom:10px; text-align:left;">
+        Password must be at least 8 characters and include uppercase, lowercase, a number and a special symbol (e.g. #).
+      </small>
+      <button type="submit" class="btn-register">Register</button>
+    </form>
+
+    <p class="mt-3">
+      Already have an account?
+      <a href="{{ url_for('login') }}" style="color:#f1c40f;">Login</a>
+    </p>
+  </div>
+</body>
+</html>
